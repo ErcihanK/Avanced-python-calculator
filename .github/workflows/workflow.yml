@@ -28,8 +28,15 @@ jobs:
           pip install flake8 pytest pytest-cov  # Add pytest-cov for coverage reporting
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Create logs directory
+        run: mkdir -p logs  # Create a logs directory if it doesn't exist
+
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
+      - name: Run REPL with logging
+        run: |
+          python calc/repl.py > logs/repl.log 2>&1  # Run the REPL and log output to logs/repl.log
 
       - name: Run tests with coverage
         run: |
