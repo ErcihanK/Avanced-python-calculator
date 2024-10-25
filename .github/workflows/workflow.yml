@@ -3,11 +3,10 @@ name: Calculator Midterm
 on:
   push:
     branches:
-      
-main
-pull_request:
-  branches:
-main
+      - main
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -16,39 +15,39 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       
-uses: actions/checkout@v2
-name: Set up Python
-uses: actions/setup-python@v2
-with:
-  python-version: '3.10'  # You can specify a range like '3.x' if desired
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'  # You can specify a range like '3.x' if desired
 
-name: Install dependencies
-run: |
-  python -m pip install --upgrade pip
-  pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-name: Create logs directory
-run: mkdir -p logs
+      - name: Create logs directory
+        run: mkdir -p logs
 
-name: Run tests
-run: |
-  python -m pytest --cov=. --log-file=logs/logsfile.log --log-file-level=DEBUG
-env:
-  PYTHONPATH: ${{ github.workspace }}
-  LOG_LEVEL: DEBUG
-  LOG_FILE: logs/logsfile.log
+      - name: Run tests
+        run: |
+          python -m pytest --cov=. --log-file=logs/logsfile.log --log-file-level=DEBUG
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          LOG_LEVEL: DEBUG
+          LOG_FILE: logs/logsfile.log
 
-name: Display test logs
-run: |
-  echo "=== Test Logs ==="
-  cat logs/logsfile.log  # Display logs in the console
+      - name: Display test logs
+        run: |
+          echo "=== Test Logs ==="
+          cat logs/logsfile.log  # Display logs in the console
 
-name: Upload test logs
-if: always()
-uses: actions/upload-artifact@v3
-with:
-  name: test-logs
-  path: logs/logsfile.log
-  if-no-files-found: warn
-  include-hidden-files: false
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-logs
+          path: logs/logsfile.log
+          if-no-files-found: warn
+          include-hidden-files: false
