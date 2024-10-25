@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - master # Change this to your main branch name if it's different
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'  # Specify the Python version you want to use
+          python-version: '3.x' 
 
       - name: Install dependencies
         run: |
@@ -31,11 +31,10 @@ jobs:
 
       - name: Run config script
         run: |
-          python repl.py > logs/config.log 2>&1  # Run your config script
+          python repl.py  # Run your config script
 
       - name: Run tests
         run: |
-          pytest --log-cli-level=INFO --log-file=logs/test.log --log-file-level=INFO  # Log test output to logs/test.log
+          pytest  # Run your tests
         env:
           PYTHONPATH: ${{ github.workspace }}  # Set the PYTHONPATH to the workspace
-
