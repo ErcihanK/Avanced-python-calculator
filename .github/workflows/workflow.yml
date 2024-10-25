@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "Installing dependencies..."
           python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov  # Add pytest-cov for coverage reporting
+          pip install flake8 pytest pytest-cov
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           echo "Dependencies installed."
 
@@ -41,10 +41,13 @@ jobs:
           echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
           echo "PYTHONPATH set to $(pwd)."
 
+      - name: Set log level to DEBUG
+        run: echo "LOG_LEVEL=DEBUG" >> $GITHUB_ENV  # Set log level
+
       - name: Run tests with coverage
         run: |
           echo "Running tests with coverage..."
-          pytest --cov=calc --cov=plugins --cov-report=term-missing > logs/test_results.log 2>&1  # Redirect output to log file
+          pytest --cov=calc --cov=plugins --cov-report=term-missing -vv  # Increased verbosity
           echo "Tests completed."
 
       - name: Display test results
