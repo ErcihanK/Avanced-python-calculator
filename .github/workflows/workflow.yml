@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -29,19 +28,14 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Create logs directory
-        run: mkdir -p logs || echo "Logs directory already exists."
+        run: mkdir -p logs && echo "Logs directory created." >> logs/creation.log || echo "Logs directory already exists." >> logs/creation.log
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
-      - name: Run REPL and capture logs
+      - name: Run REPL (not in CI)
         run: |
           python calc/repl.py > logs/repl.log 2>&1 || { echo "REPL failed"; cat logs/repl.log; exit 1; }
-
-      - name: Output logs to console
-        run: |
-          echo "== REPL Logs ==" 
-          cat logs/repl.log
 
       - name: Run tests with coverage
         run: |
