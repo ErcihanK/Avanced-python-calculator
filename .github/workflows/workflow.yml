@@ -31,7 +31,7 @@ jobs:
 
       - name: Run config script
         run: |
-          python /calc/repl.py  # Run your config script
+          python calc/repl.py  # Run your config script
 
       - name: Run tests
         run: |
