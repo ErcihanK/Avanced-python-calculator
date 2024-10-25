@@ -25,12 +25,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest
+          pip install flake8 pytest pytest-cov  # Add pytest-cov for coverage reporting
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
-          pytest  # Run your tests
+          pytest --cov=calc --cov=plugins --cov-report=term-missing  # Specify the directories to measure coverage
