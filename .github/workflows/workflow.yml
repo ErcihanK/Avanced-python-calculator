@@ -31,7 +31,7 @@ jobs:
 
       - name: Run config script
         run: |
-          python config.py > logs/config.log 2>&1  # Run your config script
+          python repl.py > logs/config.log 2>&1  # Run your config script
 
       - name: Run tests
         run: |
