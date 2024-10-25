@@ -1,15 +1,21 @@
-# calc/commands.py
+"""
+This module defines basic arithmetic operations.
+"""
 
-def add(x, y):
-    return x + y
+def add(a, b):
+    """Returns the sum of a and b."""
+    return a + b
 
-def subtract(x, y):
-    return x - y
+def subtract(a, b):
+    """Returns the difference between a and b."""
+    return a - b
 
-def multiply(x, y):
-    return x * y
+def multiply(a, b):
+    """Returns the product of a and b."""
+    return a * b
 
-def divide(x, y):
-    if y == 0:
-        return "Error: Division by zero is not allowed."
-    return x / y
+def divide(a, b):
+    """Returns the quotient of a and b. Raises an error if division by zero."""
+    if b == 0:
+        raise ZeroDivisionError("Cannot divide by zero")
+    return a / b

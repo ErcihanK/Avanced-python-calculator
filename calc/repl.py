@@ -1,3 +1,7 @@
+"""
+This module implements the REPL (Read-Eval-Print Loop) for the Advanced Python Calculator.
+"""
+
 import sys
 import logging
 import os
@@ -28,8 +32,8 @@ commands = {
     'divide': divide
 }
 
-# Function to dynamically load plugins
 def load_plugins(plugin_dir='plugins'):
+    """Dynamically load plugins from the specified directory."""
     try:
         for filename in os.listdir(plugin_dir):
             if filename.endswith('.py'):
@@ -37,12 +41,14 @@ def load_plugins(plugin_dir='plugins'):
                 module = importlib.import_module(f'{plugin_dir}.{module_name}')
                 if hasattr(module, 'register_commands'):
                     module.register_commands(commands)
-                    logging.info(f'Loaded plugin: {module_name}')
+                    logging.info('Loaded plugin: %s', module_name)
+    except FileNotFoundError as e:
+        logging.error('Plugin directory not found: %s', e)
     except Exception as e:
-        logging.error(f"Error loading plugins: {e}")
+        logging.error('Error loading plugins: %s', e)
 
-# REPL function
 def repl():
+    """Starts the REPL for the calculator."""
     logging.info("Starting REPL...")
     print("Welcome to the Advanced Python Calculator!")
     print("Available commands: add, subtract, multiply, divide, history, clear_history")
@@ -77,7 +83,7 @@ def repl():
 
         parts = user_input.split()
         if len(parts) != 3:
-            logging.error(f"Invalid input: {user_input}")
+            logging.error('Invalid input: %s', user_input)
             print("Invalid input. Please use the format: command number1 number2")
             continue
 
@@ -86,7 +92,7 @@ def repl():
             num1 = float(num1_str)
             num2 = float(num2_str)
         except ValueError:
-            logging.error(f"Invalid number input: {num1_str}, {num2_str}")
+            logging.error('Invalid number input: %s, %s', num1_str, num2_str)
             print("Please enter valid numbers.")
             continue
 
@@ -98,13 +104,13 @@ def repl():
 
         if command in commands:
             result = commands[command](num1, num2)
-            logging.info(f"Executed {command} with {num1} and {num2}, result: {result}")
+            logging.info('Executed %s with %s and %s, result: %s', command, num1, num2, result)
             print(f"Result: {result}")
 
             # Save to history
             history_manager.save_history(command, num1, num2, result)
         else:
-            logging.warning(f"Unknown command: {command}")
+            logging.warning('Unknown command: %s', command)
             print("Unknown command.")
 
 if __name__ == "__main__":
