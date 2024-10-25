@@ -2,56 +2,53 @@ name: Calculator Midterm
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      
+main
+pull_request:
+  branches:
+main
 
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
       
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
-          
-      - name: Install dependencies
-        run: |
-          echo "Installing dependencies..."
-          python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          echo "Dependencies installed."
+uses: actions/checkout@v2
+name: Set up Python
+uses: actions/setup-python@v2
+with:
+  python-version: '3.10'  # You can specify a range like '3.x' if desired
 
-      - name: Create logs directory
-        run: |
-          mkdir -p logs || echo "Logs directory already exists."
-          echo "Logs directory created or already exists."
+name: Install dependencies
+run: |
+  python -m pip install --upgrade pip
+  pip install -r requirements.txt
 
-      - name: Set PYTHONPATH
-        run: |
-          echo "Setting PYTHONPATH..."
-          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
-          echo "PYTHONPATH set to $(pwd)."
+name: Create logs directory
+run: mkdir -p logs
 
-      - name: Set log level to DEBUG
-        run: echo "LOG_LEVEL=DEBUG" >> $GITHUB_ENV  # Set log level
+name: Run tests
+run: |
+  python -m pytest --cov=. --log-file=logs/logsfile.log --log-file-level=DEBUG
+env:
+  PYTHONPATH: ${{ github.workspace }}
+  LOG_LEVEL: DEBUG
+  LOG_FILE: logs/logsfile.log
 
-      - name: Run tests with coverage
-        run: |
-          echo "Running tests with coverage..."
-          pytest --cov=calc --cov=plugins --cov-report=term-missing -vv  # Increased verbosity
-          echo "Tests completed."
+name: Display test logs
+run: |
+  echo "=== Test Logs ==="
+  cat logs/logsfile.log  # Display logs in the console
 
-      - name: Display test results
-        run: |
-          echo "Displaying test results..."
-          cat logs/test_results.log || echo "No test results found."
-          echo "Test results displayed."
+name: Upload test logs
+if: always()
+uses: actions/upload-artifact@v3
+with:
+  name: test-logs
+  path: logs/logsfile.log
+  if-no-files-found: warn
+  include-hidden-files: false
