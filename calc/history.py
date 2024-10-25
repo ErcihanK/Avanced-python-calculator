@@ -9,8 +9,13 @@ class HistoryManager:
     def load_history(self):
         """Load the calculation history from a CSV file."""
         if os.path.exists(self.file_path):
-            return pd.read_csv(self.file_path)
+            try:
+                return pd.read_csv(self.file_path)
+            except pd.errors.EmptyDataError:
+                # Return an empty DataFrame if the CSV is empty
+                return pd.DataFrame(columns=['command', 'num1', 'num2', 'result'])
         else:
+            # Return an empty DataFrame if the file does not exist
             return pd.DataFrame(columns=['command', 'num1', 'num2', 'result'])
 
     def save_history(self, command, num1, num2, result):
@@ -28,8 +33,9 @@ class HistoryManager:
         history_df.to_csv(self.file_path, index=False)
 
     def clear_history(self):
-        """Clear the calculation history."""
-        open(self.file_path, 'w').close()
+        """Clear the calculation history by writing an empty DataFrame to the file."""
+        # Write an empty DataFrame with the correct columns to the CSV file
+        pd.DataFrame(columns=['command', 'num1', 'num2', 'result']).to_csv(self.file_path, index=False)
 
     def display_history(self):
         """Display the calculation history."""
