@@ -24,19 +24,31 @@ jobs:
           
       - name: Install dependencies
         run: |
+          echo "Installing dependencies..."
           python -m pip install --upgrade pip
           pip install flake8 pytest pytest-cov  # Add pytest-cov for coverage reporting
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          echo "Dependencies installed."
 
       - name: Create logs directory
-        run: mkdir -p logs || echo "Logs directory already exists."
+        run: |
+          mkdir -p logs || echo "Logs directory already exists."
+          echo "Logs directory created or already exists."
 
       - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+        run: |
+          echo "Setting PYTHONPATH..."
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+          echo "PYTHONPATH set to $(pwd)."
 
       - name: Run tests with coverage
         run: |
+          echo "Running tests with coverage..."
           pytest --cov=calc --cov=plugins --cov-report=term-missing > logs/test_results.log 2>&1  # Redirect output to log file
+          echo "Tests completed."
 
       - name: Display test results
-        run: cat logs/test_results.log || echo "No test results found."
+        run: |
+          echo "Displaying test results..."
+          cat logs/test_results.log || echo "No test results found."
+          echo "Test results displayed."
