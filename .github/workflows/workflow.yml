@@ -1,40 +1,33 @@
-name: CI
+name: Calculator Midterm
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
         with:
-          python-version: '3.x' 
-
+          python-version: "3.10"
+          
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Create logs directory
-        run: mkdir -p logs # Create the logs directory if it doesn't exist
-
-      - name: Run config script
-        run: |
-          python calc/repl.py  # Run your config script
-
-      - name: Run tests
+      - name: Test with pytest
         run: |
           pytest  # Run your tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}  # Set the PYTHONPATH to the workspace
