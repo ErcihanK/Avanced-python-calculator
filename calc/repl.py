@@ -54,6 +54,12 @@ def repl():
             print("Please enter valid numbers.")
             continue
         
+        # Division by zero check
+        if command == 'divide' and num2 == 0:
+            logging.error("Attempted to divide by zero.")
+            print("Error: Division by zero is not allowed.")
+            continue
+
         if command == 'add':
             result = add(num1, num2)
         elif command == 'subtract':
