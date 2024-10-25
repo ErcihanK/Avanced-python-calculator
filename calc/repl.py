@@ -32,6 +32,7 @@ commands = {
     'divide': divide
 }
 
+
 def load_plugins(plugin_dir='plugins'):
     """Dynamically load plugins from the specified directory."""
     try:
@@ -44,22 +45,40 @@ def load_plugins(plugin_dir='plugins'):
                     logging.info('Loaded plugin: %s', module_name)
     except FileNotFoundError as e:
         logging.error('Plugin directory not found: %s', e)
-    except Exception as e:
-        logging.error('Error loading plugins: %s', e)
+    except ImportError as e:
+        logging.error('Import error while loading plugins: %s', e)
+    except OSError as e:
+        logging.error('OS error while accessing plugins: %s', e)
 
-def repl():
-    """Starts the REPL for the calculator."""
-    logging.info("Starting REPL...")
-    print("Welcome to the Advanced Python Calculator!")
-    print("Available commands: add, subtract, multiply, divide, history, clear_history")
-    print("Enter 'menu' to see all commands.")
-    print("Enter 'exit' to quit.")
 
-    # Load plugins at the start of the REPL
-    load_plugins()
+def execute_command(command, num1, num2):
+    """Executes the provided command with two numbers and logs the result."""
+    if command == 'divide' and num2 == 0:
+        logging.error("Attempted to divide by zero.")
+        print("Error: Division by zero is not allowed.")
+        return
 
+    if command in commands:
+        result = commands[command](num1, num2)
+        logging.info('Executed %s with %s and %s, result: %s', command, num1, num2, result)
+        print(f"Result: {result}")
+
+        # Save to history
+        history_manager.save_history(command, num1, num2, result)
+    else:
+        logging.warning('Unknown command: %s', command)
+        print("Unknown command.")
+
+
+def handle_user_input():
+    """Handles the user input and executes commands or history management."""
     while True:
-        user_input = input("calc> ").strip().lower()
+        try:
+            user_input = input("calc> ").strip().lower()
+        except EOFError as e:
+            logging.error("Error reading user input: %s", e)
+            print("Error reading input. Exiting...")
+            break
 
         if user_input == 'exit':
             logging.info("Exiting REPL...")
@@ -96,22 +115,24 @@ def repl():
             print("Please enter valid numbers.")
             continue
 
-        # Division by zero check
-        if command == 'divide' and num2 == 0:
-            logging.error("Attempted to divide by zero.")
-            print("Error: Division by zero is not allowed.")
-            continue
+        # Execute the command
+        execute_command(command, num1, num2)
 
-        if command in commands:
-            result = commands[command](num1, num2)
-            logging.info('Executed %s with %s and %s, result: %s', command, num1, num2, result)
-            print(f"Result: {result}")
 
-            # Save to history
-            history_manager.save_history(command, num1, num2, result)
-        else:
-            logging.warning('Unknown command: %s', command)
-            print("Unknown command.")
+def repl():
+    """Starts the REPL for the calculator."""
+    logging.info("Starting REPL...")
+    print("Welcome to the Advanced Python Calculator!")
+    print("Available commands: add, subtract, multiply, divide, history, clear_history")
+    print("Enter 'menu' to see all commands.")
+    print("Enter 'exit' to quit.")
+
+    # Load plugins at the start of the REPL
+    load_plugins()
+
+    # Start handling user input
+    handle_user_input()
+
 
 if __name__ == "__main__":
     repl()
