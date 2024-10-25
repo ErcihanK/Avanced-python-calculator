@@ -27,12 +27,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Verify pytest-cov installation
+        run: |
+          pip show pytest-cov  # Check if pytest-cov is installed
+
       - name: Create logs directory
         run: mkdir -p logs
 
       - name: Run tests
         run: |
-          python -m pytest --cov=. --log-file=logs/logsfile.log --log-file-level=DEBUG
+          python -m pytest --cov=calc --cov=plugins --log-file=logs/logsfile.log --log-file-level=DEBUG
         env:
           PYTHONPATH: ${{ github.workspace }}
           LOG_LEVEL: DEBUG
