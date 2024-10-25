@@ -34,6 +34,15 @@ jobs:
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
+      - name: Run REPL and capture logs
+        run: |
+          python calc/repl.py > logs/repl.log 2>&1 || { echo "REPL failed"; cat logs/repl.log; exit 1; }
+
+      - name: Output logs to console
+        run: |
+          echo "== REPL Logs ==" 
+          cat logs/repl.log
+
       - name: Run tests with coverage
         run: |
           pytest --cov=calc --cov=plugins --cov-report=term-missing  # Specify the directories to measure coverage
