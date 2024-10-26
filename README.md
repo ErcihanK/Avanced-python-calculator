@@ -188,3 +188,6 @@ def add(a, b):
     """Returns the sum of a and b."""
     return a + b
 ```
+## Video Demonstration
+Check out the video demonstration of the Advanced Python Calculator:
+[Watch the Video](https://www.youtube.com/watch?v=WzPxkbU_EAI)
