@@ -1,4 +1,3 @@
-
 # Advanced Python Calculator
 
 This is an advanced command-line calculator that supports basic arithmetic operations, history management, dynamic plugin loading, and configuration via environment variables. The calculator operates in a REPL (Read-Eval-Print Loop) interface and is built with a modular design to facilitate easy extension.
@@ -97,6 +96,71 @@ This project uses a `.env` file to manage configuration variables. You can custo
 LOG_LEVEL=DEBUG
 ```
 
+### Environment Variables Usage
+The calculator uses the `dotenv` library to load environment variables, allowing dynamic configuration. The logging level is set based on the `LOG_LEVEL` variable, providing flexibility for debugging.
+
+```python
+# Load environment variables
+load_dotenv()
+
+# Set up logging configuration
+log_level = os.getenv('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
+```
+
+## Logging
+The application utilizes Python's built-in logging module for structured logging.
+
+### Logging Features
+- `logging.info` - Logs standard operation messages.
+- `logging.error` - Logs errors such as invalid input and command execution issues.
+
+Logs are saved in a `logs` directory (created automatically) and contain detailed information about application behavior.
+
+### Logging Usage
+A professional logging setup captures essential events and errors, which aids in debugging and tracking application behavior.
+
+```python
+# Set up logging configuration
+logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
+```
+
+**Log examples in `repl.py`:**
+- Successful command execution:
+  ```python
+  logging.info('Executed %s with %s and %s, result: %s', command, num1, num2, result)
+  ```
+- Handling division by zero:
+  ```python
+  logging.error("Attempted to divide by zero.")
+  ```
+
+## Exception Handling
+The calculator employs exception handling to manage errors gracefully, following the "Look Before You Leap" (LBYL) and "Easier to Ask for Forgiveness than Permission" (EAFP) principles.
+
+### Exception Handling Strategies
+- **LBYL**: Checks for potential errors (e.g., validating input before performing operations).
+- **EAFP**: Attempts to perform an operation and catches exceptions if they occur.
+
+**Example of exception handling in `commands.py`:**
+```python
+def divide(a, b):
+    """Returns the quotient of a and b. Raises an error if division by zero."""
+    if b == 0:
+        raise ZeroDivisionError("Cannot divide by zero")
+    return a / b
+```
+
+**Example of handling user input in `repl.py`:**
+```python
+try:
+    num1 = float(num1_str)
+    num2 = float(num2_str)
+except ValueError:
+    logging.error('Invalid number input: %s, %s', num1_str, num2_str)
+    print("Please enter valid numbers.")
+```
+
 ## Run Tests
 Tests are located in the `tests` folder, covering various functionalities, including arithmetic operations, history management, and plugin loading.
 
@@ -114,21 +178,13 @@ The project aims to maintain high code coverage. After running `pytest --cov`, a
 
 ## Design Patterns
 The calculator uses several design patterns to ensure a scalable and flexible structure:
-- **Command Pattern**: Used to handle REPL commands.
-- **Facade Pattern**: Utilized for handling complex data management (history).
+- **Command Pattern**: Used to handle REPL commands, as seen in the `commands.py` module.
+- **Facade Pattern**: Utilized for handling complex data management (history), implemented in the `HistoryManager` class in `history.py`.
 
-This project uses a professional logging setup to capture important events, errors, and debug information. Logs are configured through environment variables and can be customized as needed.
-
-### Logging:
-- `logging.info` - Logs standard operation messages
-- `logging.error` - Logs errors such as invalid input and command execution issues
-
-Logs are saved in a `logs` directory (created automatically) and contain detailed information about application behavior.
-
-## Additional Information
-
-### Version Control, Documentation, and Workflow
-This project uses Git for version control and includes a `.gitignore` file to prevent unnecessary files from being committed.
-
-GitHub Actions can be set up to automate testing and ensure code quality on every push or pull request.
+### Design Pattern Example
+```python
+# Command Pattern Implementation in commands.py
+def add(a, b):
+    """Returns the sum of a and b."""
+    return a + b
 ```
